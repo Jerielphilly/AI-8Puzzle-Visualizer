@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>8-Puzzle Solver</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Open Sans', 'sans-serif'] },
+                    colors: {
+                        brand: {
+                            green: '#00b050', // HackerRank style green
+                            dark: '#0e141e', // HackerRank style dark background
+                            card: '#f4f6f8'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans min-h-screen flex flex-col">
+
+    <!-- Navigation Menu -->
+    <nav class="bg-brand-dark text-white border-b border-gray-800">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex justify-between items-center h-16">
+                <div class="text-xl font-bold tracking-tight">
+                    AI Visualizer
+                </div>
+                <ul class="flex space-x-6 text-sm font-semibold">
+                    <li><a href="#home" class="nav-link text-gray-300 hover:text-white transition-colors" data-target="home-section">Home</a></li>
+                    <li><a href="#solver" class="nav-link text-gray-300 hover:text-white transition-colors" data-target="solver-section">Solver</a></li>
+                    <li><a href="#comparison" class="nav-link text-gray-300 hover:text-white transition-colors" data-target="comparison-section">Comparison</a></li>
+                    <li><a href="#info" class="nav-link text-gray-300 hover:text-white transition-colors" data-target="info-section">Info</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl mx-auto px-6 py-8 w-full">
+
+        <!-- 1. Home Page -->
+        <section id="home-section" class="page-section">
+            <div class="bg-white border border-gray-200 rounded-md p-8 max-w-3xl mx-auto">
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">Interactive 8-Puzzle Problem Solver</h1>
+                <p class="text-gray-600 mb-8 pb-6 border-b border-gray-100">
+                    A technical visualization tool for state-space search algorithms.
+                </p>
+                
+                <h2 class="text-lg font-semibold text-gray-800 mb-4">Assignment Details</h2>
+                <div class="grid grid-cols-2 gap-4 mb-8 text-sm">
+                    <div class="bg-brand-card p-4 rounded border border-gray-200">
+                        <span class="block text-gray-500 mb-1">Course</span>
+                        <strong class="text-gray-900">Artificial Intelligence</strong>
+                    </div>
+                    <div class="bg-brand-card p-4 rounded border border-gray-200">
+                        <span class="block text-gray-500 mb-1">Assignment</span>
+                        <strong class="text-gray-900">8-Puzzle Digital Assignment</strong>
+                    </div>
+                    <div class="bg-brand-card p-4 rounded border border-gray-200">
+                        <span class="block text-gray-500 mb-1">Student</span>
+                        <strong class="text-gray-900">Jeriel Philly</strong>
+                    </div>
+                    <div class="bg-brand-card p-4 rounded border border-gray-200">
+                        <span class="block text-gray-500 mb-1">Registration No.</span>
+                        <strong class="text-gray-900">24BDS0403</strong>
+                    </div>
+                </div>
+
+                <button id="btn-go-solver" class="bg-brand-green hover:bg-green-600 text-white px-6 py-2.5 rounded text-sm font-bold transition-colors">
+                    Open Environment
+                </button>
+            </div>
+        </section>
+
+        <!-- 2 & 3 & 4. Solver Page -->
+        <section id="solver-section" class="page-section hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <!-- Left Column: Controls & Input -->
+                <div class="lg:col-span-4 space-y-4">
+                    
+                    <!-- Configuration Panel -->
+                    <div class="bg-white border border-gray-200 rounded-md">
+                        <div class="bg-gray-50 border-b border-gray-200 px-4 py-3">
+                            <h2 class="text-sm font-bold text-gray-800">Puzzle Configuration</h2>
+                        </div>
+                        <div class="p-4 space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1.5">Initial State</label>
+                                <input type="text" id="manual-initial" class="w-full border border-gray-300 rounded p-2 text-sm font-mono focus:border-brand-green focus:ring-1 focus:ring-brand-green outline-none" value="2,8,3,1,6,4,7,0,5">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1.5">Goal State</label>
+                                <input type="text" id="manual-goal" class="w-full border border-gray-300 rounded p-2 text-sm font-mono focus:border-brand-green focus:ring-1 focus:ring-brand-green outline-none" value="1,2,3,8,0,4,7,6,5">
+                            </div>
+                            
+                            <div class="flex gap-2 pt-2">
+                                <button id="btn-set-manual" class="flex-1 bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-700 text-sm font-semibold py-1.5 rounded transition-colors">Apply</button>
+                                <button id="btn-generate-random" class="flex-1 bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-700 text-sm font-semibold py-1.5 rounded transition-colors">Randomize</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Algorithm Panel -->
+                    <div class="bg-white border border-gray-200 rounded-md">
+                        <div class="bg-gray-50 border-b border-gray-200 px-4 py-3">
+                            <h2 class="text-sm font-bold text-gray-800">Algorithm Selection</h2>
+                        </div>
+                        <div class="p-4 space-y-4">
+                            <select id="algorithm-select" class="w-full border border-gray-300 rounded p-2 text-sm font-semibold text-gray-800 focus:border-brand-green focus:ring-1 focus:ring-brand-green outline-none">
+                                <option value="BFS">Breadth First Search (BFS)</option>
+                                <option value="DFS">Depth First Search (DFS)</option>
+                                <option value="DLS">Depth Limited Search (DLS)</option>
+                                <option value="IDDLS">Iterative Deepening DLS (IDDLS)</option>
+                                <option value="GBFS">Greedy Best First Search</option>
+                                <option value="ASTAR" selected>A* Search</option>
+                            </select>
+
+                            <div id="dls-options" class="hidden">
+                                <label class="block text-xs font-semibold text-gray-600 mb-1.5">Depth Limit</label>
+                                <input type="number" id="depth-limit" class="w-full border border-gray-300 rounded p-2 text-sm focus:border-brand-green focus:ring-1 focus:ring-brand-green outline-none" value="20" min="1">
+                            </div>
+
+                            <div id="heuristic-options">
+                                <label class="block text-xs font-semibold text-gray-600 mb-1.5">Heuristic</label>
+                                <select id="heuristic-select" class="w-full border border-gray-300 rounded p-2 text-sm font-semibold text-gray-800 focus:border-brand-green focus:ring-1 focus:ring-brand-green outline-none">
+                                    <option value="manhattan">Manhattan Distance</option>
+                                    <option value="misplaced">Misplaced Tiles</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Controls Panel -->
+                    <div class="bg-white border border-gray-200 rounded-md">
+                        <div class="bg-gray-50 border-b border-gray-200 px-4 py-3 flex justify-between items-center">
+                            <h2 class="text-sm font-bold text-gray-800">Execution Controls</h2>
+                            <span id="speed-label" class="text-xs font-mono text-gray-500 bg-gray-200 px-1.5 rounded">50ms</span>
+                        </div>
+                        <div class="p-4">
+                            <div class="mb-4">
+                                <input type="range" id="speed-control" class="w-full h-1 bg-gray-300 rounded appearance-none cursor-pointer" min="0" max="1000" step="10" value="50">
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-2 mb-2">
+                                <button id="btn-run" class="bg-brand-green hover:bg-green-600 text-white text-sm font-bold py-2 rounded transition-colors disabled:opacity-50">Run Search</button>
+                                <button id="btn-reset" class="bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-700 text-sm font-semibold py-2 rounded transition-colors">Reset</button>
+                            </div>
+                            <div class="grid grid-cols-4 gap-2">
+                                <button id="btn-pause" class="col-span-2 bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-700 text-sm font-semibold py-1.5 rounded disabled:opacity-50 transition-colors" disabled>Pause</button>
+                                <button id="btn-resume" class="col-span-2 bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-700 text-sm font-semibold py-1.5 rounded disabled:opacity-50 transition-colors" disabled>Resume</button>
+                                <button id="btn-prev" class="col-span-2 bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-700 text-sm font-semibold py-1.5 rounded disabled:opacity-50 transition-colors" disabled>Step Back</button>
+                                <button id="btn-next" class="col-span-2 bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-700 text-sm font-semibold py-1.5 rounded disabled:opacity-50 transition-colors" disabled>Step Fwd</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Visualization -->
+                <div class="lg:col-span-8 space-y-4">
+                    
+                    <div class="bg-white border border-gray-200 rounded-md p-6">
+                        <div class="flex justify-between items-end mb-8 border-b border-gray-100 pb-4">
+                            <div class="text-center">
+                                <div class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Initial</div>
+                                <div id="board-initial" class="puzzle-board mini mx-auto"></div>
+                            </div>
+                            <div class="text-center flex-grow px-4">
+                                <div id="status-message" class="text-sm font-semibold text-gray-600">
+                                    Ready
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Goal</div>
+                                <div id="board-goal" class="puzzle-board mini mx-auto"></div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-center mb-6">
+                            <div id="board-main" class="puzzle-board main relative">
+                                <!-- Tiles generated by JS -->
+                            </div>
+                        </div>
+
+                        <div id="solution-summary" class="bg-gray-50 border border-gray-200 p-4 rounded hidden">
+                            <h3 class="text-sm font-bold text-gray-800 mb-3 border-b border-gray-200 pb-2">Execution Results</h3>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
+                                <div><span class="text-gray-500 block text-xs">Status</span><span id="sum-status" class="font-bold text-gray-900">-</span></div>
+                                <div><span class="text-gray-500 block text-xs">Time</span><span class="font-bold text-gray-900"><span id="sum-time">-</span> ms</span></div>
+                                <div><span class="text-gray-500 block text-xs">Moves</span><span id="sum-moves" class="font-bold text-brand-green">-</span></div>
+                                <div><span class="text-gray-500 block text-xs">Cost</span><span id="sum-cost" class="font-bold text-gray-900">-</span></div>
+                                <div><span class="text-gray-500 block text-xs">Generated</span><span id="sum-generated" class="font-semibold text-gray-800">-</span></div>
+                                <div><span class="text-gray-500 block text-xs">Expanded</span><span id="sum-expanded" class="font-semibold text-gray-800">-</span></div>
+                                <div><span class="text-gray-500 block text-xs">Max Depth</span><span id="sum-max-depth" class="font-semibold text-gray-800">-</span></div>
+                                <div><span class="text-gray-500 block text-xs">Memory Peak</span><span id="sum-memory" class="font-semibold text-gray-800">-</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Metrics Tracker -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <div class="bg-white border border-gray-200 rounded-md p-4">
+                            <div class="text-xs font-semibold text-gray-500 mb-1">Generated</div>
+                            <div id="stat-generated" class="text-xl font-mono text-gray-900">0</div>
+                        </div>
+                        <div class="bg-white border border-gray-200 rounded-md p-4">
+                            <div class="text-xs font-semibold text-gray-500 mb-1">Expanded</div>
+                            <div id="stat-expanded" class="text-xl font-mono text-gray-900">0</div>
+                        </div>
+                        <div class="bg-white border border-gray-200 rounded-md p-4">
+                            <div class="text-xs font-semibold text-gray-500 mb-1">Frontier / Explored</div>
+                            <div class="text-xl font-mono text-gray-900"><span id="stat-frontier">0</span> <span class="text-sm text-gray-400">/</span> <span id="stat-explored">0</span></div>
+                        </div>
+                        <div class="bg-white border border-gray-200 rounded-md p-4">
+                            <div class="text-xs font-semibold text-gray-500 mb-1">Depth / Cost</div>
+                            <div class="text-xl font-mono text-gray-900"><span id="stat-depth">0</span> <span class="text-sm text-gray-400">/</span> <span id="stat-cost">0</span></div>
+                        </div>
+                        <div class="bg-gray-800 border border-gray-900 rounded-md p-4 col-span-2 sm:col-span-4" id="heuristic-stat-panel">
+                            <div class="flex justify-between items-center">
+                                <div class="text-xs font-semibold text-gray-400">Heuristic Evaluation</div>
+                                <div id="stat-heuristic" class="text-xl font-mono text-green-400">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. Comparison Page -->
+        <section id="comparison-section" class="page-section hidden">
+            <div class="bg-white border border-gray-200 rounded-md p-6 max-w-5xl mx-auto">
+                <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900">Algorithm Benchmark</h1>
+                        <p class="text-sm text-gray-500">Performance comparison on the current board configuration.</p>
+                    </div>
+                    <button id="btn-run-comparison" class="bg-brand-dark hover:bg-gray-800 text-white px-4 py-2 rounded text-sm font-bold transition-colors">
+                        Run Tests
+                    </button>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead>
+                            <tr class="bg-gray-50 border-y border-gray-200 text-gray-600">
+                                <th class="py-3 px-4 font-semibold">Algorithm</th>
+                                <th class="py-3 px-4 font-semibold">Solution</th>
+                                <th class="py-3 px-4 font-semibold">Expanded</th>
+                                <th class="py-3 px-4 font-semibold">Moves</th>
+                                <th class="py-3 px-4 font-semibold">Time (ms)</th>
+                                <th class="py-3 px-4 font-semibold">Memory</th>
+                            </tr>
+                        </thead>
+                        <tbody id="comparison-tbody" class="divide-y divide-gray-100 text-gray-800">
+                            <tr>
+                                <td colspan="6" class="py-8 text-center text-gray-500">
+                                    Click "Run Tests" to begin benchmarking.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 8. Algorithm Information Page -->
+        <section id="info-section" class="page-section hidden">
+            <div class="max-w-4xl mx-auto bg-white border border-gray-200 rounded-md p-8">
+                <h1 class="text-2xl font-bold text-gray-900 mb-6 border-b border-gray-200 pb-4">Algorithm Documentation</h1>
+                
+                <div class="space-y-8 text-sm text-gray-700">
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">1. Breadth First Search (BFS)</h3>
+                        <p class="mb-2"><strong>Principle:</strong> Uses a FIFO Queue to explore layer by layer.</p>
+                        <p class="mb-2 text-brand-green font-semibold">Advantages: Complete & Optimal.</p>
+                        <p class="mb-2 text-red-600 font-semibold">Limitations: Exponential memory consumption.</p>
+                        <p class="font-mono bg-gray-50 p-2 rounded inline-block text-xs">Time: O(b^d) | Space: O(b^d)</p>
+                    </div>
+                    
+                    <hr class="border-gray-100">
+
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">2. Depth First Search (DFS)</h3>
+                        <p class="mb-2"><strong>Principle:</strong> Uses a LIFO Stack to explore down branches fully before backtracking.</p>
+                        <p class="mb-2 text-brand-green font-semibold">Advantages: Very memory efficient.</p>
+                        <p class="mb-2 text-red-600 font-semibold">Limitations: Not optimal, can get stuck in infinite paths without loop detection.</p>
+                        <p class="font-mono bg-gray-50 p-2 rounded inline-block text-xs">Time: O(b^m) | Space: O(bm)</p>
+                    </div>
+
+                    <hr class="border-gray-100">
+                    
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">3. Iterative Deepening (IDDLS)</h3>
+                        <p class="mb-2"><strong>Principle:</strong> Runs DFS with an increasing depth limit.</p>
+                        <p class="mb-2 text-brand-green font-semibold">Advantages: Optimal and complete, but memory efficient like DFS.</p>
+                        <p class="mb-2 text-red-600 font-semibold">Limitations: Re-evaluates upper tree layers multiple times.</p>
+                        <p class="font-mono bg-gray-50 p-2 rounded inline-block text-xs">Time: O(b^d) | Space: O(bd)</p>
+                    </div>
+
+                    <hr class="border-gray-100">
+
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">4. A* Search</h3>
+                        <p class="mb-2"><strong>Principle:</strong> Informed search using a Priority Queue and evaluation function f(n) = g(n) + h(n).</p>
+                        <p class="mb-2 text-brand-green font-semibold">Advantages: Highly efficient, complete, and optimal (with admissible heuristic).</p>
+                        <p class="mb-2 text-red-600 font-semibold">Limitations: Retains all generated nodes in memory.</p>
+                        <p class="font-mono bg-gray-50 p-2 rounded inline-block text-xs">Time: Varies by heuristic | Space: O(b^d)</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/puzzle.js"></script>
+    <script src="js/algorithms.js"></script>
+    <script src="js/ui.js"></script>
+</body>
+</html>
