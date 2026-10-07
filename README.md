@@ -34,10 +34,17 @@ For GBFS and A*, two heuristic functions are available:
 
 ## Screenshots
 
-*(Include screenshots here before submission)*
-- Home Page
-- Solver executing A* search
-- Algorithm Comparison Table
+### Home Page
+![Home Page](images/1.png)
+
+### Solver Executing Search
+![Solver Page](images/2.png)
+
+### Algorithm Comparison Table
+![Comparison Table](images/3.png)
+
+### Algorithm Information Page
+![Info Page](images/4.png)
 
 ## GitHub Pages URL
 
