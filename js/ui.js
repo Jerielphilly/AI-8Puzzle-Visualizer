@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Rendering Boards
-    function renderBoard(container, board, animated = false) {
+    function renderBoard(container, board, animated = false, movedTile = null) {
         if (animated) {
             container.classList.add('absolute-mode');
             
@@ -95,6 +95,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const gap = isMini ? 2 : 4;
             const padding = isMini ? 2 : 4;
             
+            // clear highlights
+            Array.from(container.children).forEach(child => child.classList.remove('highlight-move'));
+            
             board.forEach((val, index) => {
                 const row = Math.floor(index / 3);
                 const col = index % 3;
@@ -104,6 +107,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const tile = container.querySelector(`[data-val="${val}"]`);
                 if (tile) {
                     tile.style.transform = `translate(${x}px, ${y}px)`;
+                    if (movedTile !== null && val === movedTile) {
+                        tile.classList.add('highlight-move');
+                    }
                 }
             });
         } else {
@@ -195,7 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
         statHeuristic.textContent = '-';
         
         solutionSummary.classList.add('hidden');
-        statusMessage.textContent = 'Ready to solve';
+        statusMessage.innerHTML = '<span class="text-gray-600 font-semibold">Ready to solve</span>';
         boardMain.classList.remove('smooth-sliding');
         renderBoard(boardMain, initialBoard, true);
     }
@@ -208,12 +214,18 @@ document.addEventListener('DOMContentLoaded', () => {
         statDepth.textContent = result.current ? result.current.depth : 0;
         statCost.textContent = result.current ? result.current.cost : 0;
         
+        let movedTile = null;
+        if (result.current && result.current.parent) {
+            const parentBlankIdx = result.current.parent.board.indexOf(0);
+            movedTile = result.current.board[parentBlankIdx];
+        }
+        
         if (result.h !== null && result.h !== undefined) {
             statHeuristic.textContent = `h(n): ${result.h} | f(n): ${result.f}`;
         }
         
         if (result.current) {
-            renderBoard(boardMain, result.current.board, true);
+            renderBoard(boardMain, result.current.board, true, movedTile);
         }
     }
     
@@ -239,21 +251,21 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('sum-memory').textContent = '~' + (result.exploredSize * 100) + ' B'; 
         
         if (found && result.current) {
-            statusMessage.textContent = 'Animating Solution...';
+            statusMessage.innerHTML = '<span class="text-brand-green font-bold animate-pulse">Animating Solution...</span>';
             animateSolutionPath(result.current.getPath());
         } else {
-            statusMessage.textContent = 'Search Failed or Limit Reached';
+            statusMessage.innerHTML = '<span class="text-red-600 font-bold">Search Failed or Limit Reached</span>';
         }
     }
     
     function animateSolutionPath(pathArr) {
         stopAnimation();
         
-        // Skip animation if turbo mode is on or the path is extremely long (e.g. DFS)
-        if (delay === 0 || pathArr.length > 200) {
+        // Skip animation only if the path is extremely long (e.g. DFS) to prevent browser lockup
+        if (pathArr.length > 200) {
             boardMain.classList.remove('smooth-sliding');
             renderBoard(boardMain, pathArr[pathArr.length - 1].board, true);
-            statusMessage.textContent = 'Solution Path Complete (Animation Skipped)';
+            statusMessage.innerHTML = '<span class="text-brand-green font-bold">Solution Path Complete (Animation Skipped)</span>';
             return;
         }
 
@@ -271,7 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         function step() {
             if (i >= pathArr.length) {
-                statusMessage.textContent = 'Solution Path Complete';
+                statusMessage.innerHTML = '<span class="text-brand-green font-bold">Solution Path Complete</span>';
                 return;
             }
             renderBoard(boardMain, pathArr[i].board, true);
@@ -395,7 +407,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         executionStartTime = performance.now();
-        statusMessage.textContent = 'Searching...';
+        statusMessage.innerHTML = '<span class="text-blue-600 font-bold animate-pulse">Searching...</span>';
         startAnimation();
     });
     

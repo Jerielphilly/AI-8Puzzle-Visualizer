@@ -281,9 +281,12 @@
                 <div class="space-y-8 text-sm text-gray-700">
                     <div>
                         <h3 class="text-lg font-bold text-gray-900 mb-2">1. Breadth First Search (BFS)</h3>
-                        <p class="mb-2"><strong>Principle:</strong> Uses a FIFO Queue to explore layer by layer.</p>
-                        <p class="mb-2 text-brand-green font-semibold">Advantages: Complete & Optimal.</p>
-                        <p class="mb-2 text-red-600 font-semibold">Limitations: Exponential memory consumption.</p>
+                        <p class="mb-1"><strong>Description:</strong> An uninformed search algorithm that explores the search tree level by level.</p>
+                        <p class="mb-1"><strong>Working Principle:</strong> Uses a FIFO (First-In-First-Out) Queue to expand the shallowest unexpanded node.</p>
+                        <p class="mb-1 text-brand-green font-semibold">Advantages: Guaranteed to find the shallowest goal state.</p>
+                        <p class="mb-1 text-red-600 font-semibold">Limitations: High memory consumption since it keeps all nodes in memory.</p>
+                        <p class="mb-1"><strong>Completeness:</strong> Yes</p>
+                        <p class="mb-2"><strong>Optimality:</strong> Yes (since step cost is 1)</p>
                         <p class="font-mono bg-gray-50 p-2 rounded inline-block text-xs">Time: O(b^d) | Space: O(b^d)</p>
                     </div>
                     
@@ -291,29 +294,64 @@
 
                     <div>
                         <h3 class="text-lg font-bold text-gray-900 mb-2">2. Depth First Search (DFS)</h3>
-                        <p class="mb-2"><strong>Principle:</strong> Uses a LIFO Stack to explore down branches fully before backtracking.</p>
-                        <p class="mb-2 text-brand-green font-semibold">Advantages: Very memory efficient.</p>
-                        <p class="mb-2 text-red-600 font-semibold">Limitations: Not optimal, can get stuck in infinite paths without loop detection.</p>
+                        <p class="mb-1"><strong>Description:</strong> An uninformed search algorithm that explores as far as possible along each branch before backtracking.</p>
+                        <p class="mb-1"><strong>Working Principle:</strong> Uses a LIFO (Last-In-First-Out) Stack to expand the deepest unexpanded node.</p>
+                        <p class="mb-1 text-brand-green font-semibold">Advantages: Very memory efficient compared to BFS.</p>
+                        <p class="mb-1 text-red-600 font-semibold">Limitations: Can get stuck in deep paths and is not guaranteed to find the shortest path.</p>
+                        <p class="mb-1"><strong>Completeness:</strong> No (can fail in infinite spaces, though our explored set prevents loops here)</p>
+                        <p class="mb-2"><strong>Optimality:</strong> No (may find a longer path first)</p>
                         <p class="font-mono bg-gray-50 p-2 rounded inline-block text-xs">Time: O(b^m) | Space: O(bm)</p>
                     </div>
 
                     <hr class="border-gray-100">
+
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">3. Depth Limited Search (DLS)</h3>
+                        <p class="mb-1"><strong>Description:</strong> A variation of DFS that restricts the search to a predetermined depth limit.</p>
+                        <p class="mb-1"><strong>Working Principle:</strong> Operates exactly like DFS but prunes any node that exceeds the specified depth limit (l).</p>
+                        <p class="mb-1 text-brand-green font-semibold">Advantages: Prevents DFS from wandering down infinite paths.</p>
+                        <p class="mb-1 text-red-600 font-semibold">Limitations: May fail to find a solution if the goal is deeper than the limit.</p>
+                        <p class="mb-1"><strong>Completeness:</strong> No (fails if goal is deeper than limit)</p>
+                        <p class="mb-2"><strong>Optimality:</strong> No</p>
+                        <p class="font-mono bg-gray-50 p-2 rounded inline-block text-xs">Time: O(b^l) | Space: O(bl)</p>
+                    </div>
+                    
+                    <hr class="border-gray-100">
                     
                     <div>
-                        <h3 class="text-lg font-bold text-gray-900 mb-2">3. Iterative Deepening (IDDLS)</h3>
-                        <p class="mb-2"><strong>Principle:</strong> Runs DFS with an increasing depth limit.</p>
-                        <p class="mb-2 text-brand-green font-semibold">Advantages: Optimal and complete, but memory efficient like DFS.</p>
-                        <p class="mb-2 text-red-600 font-semibold">Limitations: Re-evaluates upper tree layers multiple times.</p>
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">4. Iterative Deepening Search (IDDLS)</h3>
+                        <p class="mb-1"><strong>Description:</strong> A strategy that repeatedly applies DLS with increasing depth limits.</p>
+                        <p class="mb-1"><strong>Working Principle:</strong> Runs DLS for depth 0, then depth 1, then depth 2, etc., until the goal is found.</p>
+                        <p class="mb-1 text-brand-green font-semibold">Advantages: Combines the memory efficiency of DFS with the completeness and optimality of BFS.</p>
+                        <p class="mb-1 text-red-600 font-semibold">Limitations: Re-evaluates upper tree layers multiple times.</p>
+                        <p class="mb-1"><strong>Completeness:</strong> Yes</p>
+                        <p class="mb-2"><strong>Optimality:</strong> Yes (since step cost is 1)</p>
                         <p class="font-mono bg-gray-50 p-2 rounded inline-block text-xs">Time: O(b^d) | Space: O(bd)</p>
                     </div>
 
                     <hr class="border-gray-100">
 
                     <div>
-                        <h3 class="text-lg font-bold text-gray-900 mb-2">4. A* Search</h3>
-                        <p class="mb-2"><strong>Principle:</strong> Informed search using a Priority Queue and evaluation function f(n) = g(n) + h(n).</p>
-                        <p class="mb-2 text-brand-green font-semibold">Advantages: Highly efficient, complete, and optimal (with admissible heuristic).</p>
-                        <p class="mb-2 text-red-600 font-semibold">Limitations: Retains all generated nodes in memory.</p>
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">5. Greedy Best First Search (GBFS)</h3>
+                        <p class="mb-1"><strong>Description:</strong> An informed search algorithm that expands the node estimated to be closest to the goal.</p>
+                        <p class="mb-1"><strong>Working Principle:</strong> Uses a Priority Queue ordered solely by a heuristic function h(n).</p>
+                        <p class="mb-1 text-brand-green font-semibold">Advantages: Often finds solutions much faster than uninformed searches.</p>
+                        <p class="mb-1 text-red-600 font-semibold">Limitations: Can be misled by bad heuristics, leading to suboptimal paths or dead ends.</p>
+                        <p class="mb-1"><strong>Completeness:</strong> No (can get stuck in loops without an explored set, though complete in finite spaces)</p>
+                        <p class="mb-2"><strong>Optimality:</strong> No</p>
+                        <p class="font-mono bg-gray-50 p-2 rounded inline-block text-xs">Time: O(b^m) | Space: O(b^m)</p>
+                    </div>
+
+                    <hr class="border-gray-100">
+
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">6. A* Search</h3>
+                        <p class="mb-1"><strong>Description:</strong> An informed search algorithm that aims to find the lowest-cost path to the goal.</p>
+                        <p class="mb-1"><strong>Working Principle:</strong> Uses a Priority Queue ordered by f(n) = g(n) + h(n), combining path cost and heuristic.</p>
+                        <p class="mb-1 text-brand-green font-semibold">Advantages: Highly efficient, complete, and optimal (if heuristic is admissible).</p>
+                        <p class="mb-1 text-red-600 font-semibold">Limitations: High memory usage; must retain all generated nodes in memory.</p>
+                        <p class="mb-1"><strong>Completeness:</strong> Yes</p>
+                        <p class="mb-2"><strong>Optimality:</strong> Yes (with an admissible heuristic like Manhattan or Misplaced Tiles)</p>
                         <p class="font-mono bg-gray-50 p-2 rounded inline-block text-xs">Time: Varies by heuristic | Space: O(b^d)</p>
                     </div>
                 </div>

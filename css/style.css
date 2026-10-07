@@ -98,3 +98,6 @@ html {
 .puzzle-board.smooth-sliding .tile {
     transition: all 0.2s ease-in-out;
 }
+
+.highlight-move { background-color: #00b050 !important; color: white !important; border-color: #008833 !important; }
+
