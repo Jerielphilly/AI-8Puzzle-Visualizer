@@ -46,6 +46,11 @@ For GBFS and A*, two heuristic functions are available:
 ### Algorithm Information Page
 ![Info Page](images/4.png)
 
+## Demonstration Video
+
+- **Watch Online (Google Drive):** [Video Demonstration Link](https://drive.google.com/file/d/1pTBFuGuHOD6FnHOJqvdIzb60OjenfNwl/view?usp=sharing)
+- **Local File in Repository:** [`docs/ai.mp4`](docs/ai.mp4)
+
 ## GitHub Pages URL
 
 [https://jerielphilly.github.io/AI-8Puzzle-Visualizer](https://jerielphilly.github.io/AI-8Puzzle-Visualizer)
